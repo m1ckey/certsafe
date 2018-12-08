@@ -30,7 +30,7 @@ do
 	composite -dissolve 15 -tile $watermark /tmp/certsafe/$image /tmp/certsafe/$image
 	mogrify -format jpg -resize 1024 /tmp/certsafe/$image
 	image=$(echo "$image" | cut -f 1 -d '.')
-	convert "/tmp/certsafe/$image.jpg" "/tmp/certsafe/$image.pdf"
+	convert "/tmp/certsafe/$image.jpg" -density 50 "/tmp/certsafe/$image.pdf"
 	mv /tmp/certsafe/$image.{jpg,pdf} out
 done
 echo 'done'
