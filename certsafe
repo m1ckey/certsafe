@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ "$#" -lt 2 ]; then
+	echo 'usage: watermark.sh WATERMARK IMAGE...'
+	exit 1
+fi
+
+rm -rf /tmp/watermark
+mkdir /tmp/watermark
+mkdir -p out
+
+watermark=$1
+shift
+
+echo 'watermarking images'
+for image in "$@"
+do
+	echo $image
+	cp $image /tmp/watermark
+	image=$(basename $image)
+	composite -dissolve 15 -tile $watermark /tmp/watermark/$image /tmp/watermark/$image
+	mogrify -format jpg -resize 1024 /tmp/watermark/$image
+	mv /tmp/watermark/*.jpg out
+done
+echo 'done'
+
