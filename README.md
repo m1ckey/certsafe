@@ -1,5 +1,5 @@
 # certsafe
-a simple script which watermarks, resizes, and converts images to JPGs which are safe to share
+a simple script which watermarks, resizes, and converts images to JPGs and PDFs which are safe to share
 
 ## usage
 

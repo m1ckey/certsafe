@@ -1,26 +1,37 @@
 #!/bin/bash
 
 if [ "$#" -lt 2 ]; then
-	echo 'usage: watermark.sh WATERMARK IMAGE...'
+	echo 'usage: certsafe WATERMARK IMAGE...'
 	exit 1
 fi
 
-rm -rf /tmp/watermark
-mkdir /tmp/watermark
+rm -rf /tmp/certsafe
+mkdir /tmp/certsafe
 mkdir -p out
 
 watermark=$1
 shift
 
-echo 'watermarking images'
+if ! [[ -r $watermark ]]; then
+	echo "$watermark not readable"
+	exit 1
+fi
+
 for image in "$@"
 do
+	if ! [[ -r $image ]]; then
+		echo "$image not readable, skipping"
+		continue
+	fi
+
 	echo $image
-	cp $image /tmp/watermark
+	cp $image /tmp/certsafe
 	image=$(basename $image)
-	composite -dissolve 15 -tile $watermark /tmp/watermark/$image /tmp/watermark/$image
-	mogrify -format jpg -resize 1024 /tmp/watermark/$image
-	mv /tmp/watermark/*.jpg out
+	composite -dissolve 15 -tile $watermark /tmp/certsafe/$image /tmp/certsafe/$image
+	mogrify -format jpg -resize 1024 /tmp/certsafe/$image
+	image=$(echo "$image" | cut -f 1 -d '.')
+	convert "/tmp/certsafe/$image.jpg" "/tmp/certsafe/$image.pdf"
+	mv /tmp/certsafe/$image.{jpg,pdf} out
 done
 echo 'done'
 
