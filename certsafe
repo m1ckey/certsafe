@@ -5,8 +5,7 @@ if [ "$#" -lt 2 ]; then
 	exit 1
 fi
 
-rm -rf /tmp/certsafe
-mkdir /tmp/certsafe
+TEMP_DIR=$(mktemp -d)
 mkdir -p out
 
 watermark=$1
@@ -25,13 +24,13 @@ do
 	fi
 
 	echo $image
-	cp $image /tmp/certsafe
+	cp $image $TEMP_DIR
 	image=$(basename $image)
-	composite -dissolve 15 -tile $watermark /tmp/certsafe/$image /tmp/certsafe/$image
-	mogrify -format jpg -resize 1024 /tmp/certsafe/$image
+	composite -dissolve 15 -tile $watermark $TEMP_DIR/$image $TEMP_DIR/$image
+	mogrify -format jpg -resize 1024 $TEMP_DIR/$image
 	image=$(echo "$image" | cut -f 1 -d '.')
-	convert "/tmp/certsafe/$image.jpg" -density 50 "/tmp/certsafe/$image.pdf"
-	mv /tmp/certsafe/$image.{jpg,pdf} out
+	convert "$TEMP_DIR/$image.jpg" -density 50 "$TEMP_DIR/$image.pdf"
+	mv $TEMP_DIR/$image.{jpg,pdf} out
 done
 echo 'done'
 
